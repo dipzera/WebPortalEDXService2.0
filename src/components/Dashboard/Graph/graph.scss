@@ -1,0 +1,97 @@
+.graph {
+  padding: 4rem 0;
+
+  border-bottom: 1px solid white;
+}
+
+.graph__inner {
+  display: flex;
+  @media screen and (max-width: $laptop) {
+    flex-wrap: wrap;
+  }
+}
+
+.graph-item {
+  margin: 0 auto;
+  flex-basis: 40%;
+
+
+  @media screen and (max-width: $laptop) {
+    flex-basis: 100%;
+  }
+
+  &:not(:last-child) {
+    border-right: 1px solid white;
+    padding-right: 5rem;
+
+    @media screen and (max-width: $laptop) {
+      border-right: none;
+    }
+    @media screen and (max-width: $tablet) {
+      padding-right: 0;
+    }
+  }
+
+
+  &:last-child {
+    padding-top: 3rem;
+
+    //@media screen and (max-width: 415px) {
+    //  display: none;
+    //}
+  }
+
+
+}
+
+.graph-item__chart {
+
+}
+
+.graph-item__select {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4rem;
+
+  &-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $gray;
+  }
+
+  &-options {
+    button {
+      cursor: pointer;
+      background: none;
+      border: 0;
+
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+
+      @media screen and (max-width: $mobile-sm) {
+        font-size: 14px;
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+
+
+  }
+
+}
+
+.invoice-btns,
+.order-btns {
+  outline: none;
+  &.active {
+    border: 1px solid $black;
+    border-radius: 2px;
+  }
+}
+
+
