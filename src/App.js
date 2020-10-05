@@ -1,31 +1,41 @@
-import React from "react"
+import React, { useEffect } from "react";
 import {
   BrowserRouter,
   Route,
   Switch,
   Redirect,
   Router,
-} from "react-router-dom"
-import { LoginPage } from "./pages/LoginPage"
-import { RegisterPage } from "./pages/RegisterPage"
-import { RecoveryPage } from "./pages/RecoveryPage"
-import { Dashboard } from "./components/Dashboard/Dashboard"
-import { ReceivedOrder } from "./components/Entry/ReceivedOrder"
-import { ReceivedInvoice } from "./components/Entry/ReceivedInvoice"
-import { Settings } from "./components/Settings/Settings"
-import { SentOrder } from "./components/Entry/SentOrder"
-import { SentInvoice } from "./components/Entry/SentInvoice"
-import ErrorPage from "./pages/ErrorPage"
-import history from "./util/history"
-import AuthLayout from "./components/layout/AuthLayout"
-import PublicLayout from "./components/layout/PublicLayout"
+} from "react-router-dom";
+import { LoginPage } from "./pages/LoginPage";
+import { RegisterPage } from "./pages/RegisterPage";
+import { RecoveryPage } from "./pages/RecoveryPage";
+import { Dashboard } from "./components/Dashboard/Dashboard";
+import { ReceivedOrder } from "./components/Entry/ReceivedOrder";
+import { ReceivedInvoice } from "./components/Entry/ReceivedInvoice";
+import { Settings } from "./components/Settings/Settings";
+import { SentOrder } from "./components/Entry/SentOrder";
+import { SentInvoice } from "./components/Entry/SentInvoice";
+import ErrorPage from "./pages/ErrorPage";
+import history from "./util/history";
+import AuthLayout from "./layout/AuthLayout";
+import PublicLayout from "./layout/PublicLayout";
+import Product from "./components/Product/Product";
+import ValidatePage from "./pages/ValidatePage";
 
+const entry =
+  ("/received-invoice" || "/sent-invoice" || "/received-order" || "/sent-order");
 
 const pages = [
   {
     exact: true,
     path: "/",
     component: () => <Redirect to={"/dashboard"} />,
+    layout: AuthLayout,
+  },
+  {
+    exact: true,
+    path: `/:entry/product`,
+    component: Product,
     layout: AuthLayout,
   },
   {
@@ -82,30 +92,48 @@ const pages = [
     component: Settings,
     layout: AuthLayout,
   },
-]
+  {
+    exact: true,
+    path: '/validate/:token',
+    component: ValidatePage,
+    layout: PublicLayout
+  }
+];
 
-const App = () => (
-  <Router history={history}>
-    <BrowserRouter>
-      <Switch>
-        {pages.map(
-          ({ exact, path, component: Component, layout: Layout }, index) => (
-            <Route
-              key={index}
-              exact={exact}
-              path={path}
-              render={(props) => (
-                <Layout history={props.history}>
-                  <Component {...props} />
-                </Layout>
-              )}
-            />
-          )
-        )}
-        <Route exact path={"*"} component={ErrorPage} />
-      </Switch>
-    </BrowserRouter>
-  </Router>
-)
-
-export default App
+const App = () => {
+  return (
+    <Router history={history}>
+      <BrowserRouter>
+        <Switch>
+          {pages.map(
+            ({ exact, path, component: Component, layout: Layout }, index) => (
+              <Route
+                key={index}
+                exact={exact}
+                path={path}
+                render={(props) => {
+                  return (
+                    <Layout
+                      history={props.history}
+                      location={props.location}
+                      match={props.match}
+                    >
+                      <Component
+                        history={props.history}
+                        location={props.location}
+                        match={props.match}
+                        {...props}
+                      />
+                    </Layout>
+                  );
+                }}
+              />
+            )
+          )}
+          <Route exact path={"*"} component={ErrorPage} />
+        </Switch>
+      </BrowserRouter>
+    </Router>
+  );
+};
+export default App;

@@ -1,5 +1,5 @@
 import React, {useContext} from "react"
-import {LayoutContext} from "../layout/context"
+import {LayoutContext} from "../../layout/context"
 import {localization} from "../../util/localization"
 import arrowRight from "../../assets/images/arrow-right.svg"
 import LoadingSpinner from "../Loading/LoadingSpinner"
@@ -8,12 +8,12 @@ import useFilter from "../../hooks/useFilter"
 import EntryTableItemOrder from "./EntryTableItemOrder"
 import EntryFilterComponent from "./EntryFilterComponent"
 
-export const SentInvoice = () => {
+export const SentInvoice = ({history}) => {
   const {
     current_lang,
   } = useContext(LayoutContext);
   const fetchUrl =
-    "http://api.efactura.md:4445/WebPortalEDXService/json/GetSentInvoiceList?";
+    "https://api.edi.md/WebPortalEDXService/json/GetSentInvoiceList?";
   const [
     getToday,
     getMonth,
@@ -59,11 +59,14 @@ export const SentInvoice = () => {
             <EntryTableItemInvoice
               entryData={invoice}
               current_lang={current_lang}
+              history={history}
             />
           ) : (
             <EntryTableItemOrder
               entryData={invoice}
               current_lang={current_lang}
+              history={history}
+
             />
           )}
         </>

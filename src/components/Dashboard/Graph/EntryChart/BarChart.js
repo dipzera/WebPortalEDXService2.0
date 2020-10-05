@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import { DashboardContext } from "../DashboardContext";
-import useFetch from "../../../hooks/useFetch";
-import convertDateMilliseconds from "../../../util/convertDateMilliseconds";
-import { localization } from "../../../util/localization";
-import AuthLayout from "../../../layout/AuthLayout";
-import { LayoutContext } from "../../../layout/context";
+import { DashboardContext } from "../../DashboardContext";
+import useFetch from "../../../../hooks/useFetch";
+import convertDateMilliseconds from "../../../../util/convertDateMilliseconds";
+import { localization } from "../../../../util/localization";
+import AuthLayout from "../../../../layout/AuthLayout";
+import { LayoutContext } from "../../../../layout/context";
 
 const BarChart = ({
   pendingRec,
-  pendingSent,
   processingRec,
-  processingSent,
   rejectedRec,
+  acceptedRec,
+  pendingSent,
+  processingSent,
   rejectedSent,
   acceptedSent,
-  acceptedRec,
   active,
 }) => {
   const { current_lang } = useContext(LayoutContext);
@@ -86,6 +86,7 @@ const BarChart = ({
     const chart = chartReference.chartInstance;
     const chartConfig = chartReference.chartInstance.config.data;
     if (active === "invoiceReceivedBtn") {
+
       chartConfig.datasets[0].data = pendingRec;
       chartConfig.datasets[1].data = processingRec;
       chartConfig.datasets[2].data = rejectedRec;

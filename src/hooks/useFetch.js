@@ -16,9 +16,8 @@ export default function useFetch({ method, url, data = null, config = null }) {
           .then((res) => {
             setResponse(res.data)
           })
-          .catch(() => {
-            localStorage.clear()
-            history.push("/login")
+          .catch((e) => {
+            console.log(e)
           })
           .finally(() => {
             setIsLoading(false)
@@ -27,7 +26,6 @@ export default function useFetch({ method, url, data = null, config = null }) {
         setError(err)
       }
     }
-
     fetchData()
   }, [method, url, data, config])
 

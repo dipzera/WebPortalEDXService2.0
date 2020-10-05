@@ -1,13 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 import DoughnutChart from "./DoughnutChart";
 import BarChart from "./BarChart";
-import { LayoutContext } from "../../../layout/context";
-import { DashboardContext } from "../DashboardContext";
-import { localization } from "../../../util/localization";
-import GraphSelect from "../Graph/GraphSelect";
-import convertDateMilliseconds from "../../../util/convertDateMilliseconds"
-import useFetch from "../../../hooks/useFetch"
+import { LayoutContext } from "../../../../layout/context";
+import { DashboardContext } from "../../DashboardContext";
+import { localization } from "../../../../util/localization";
+import GraphSelect from "../GraphSelect";
+import convertDateMilliseconds from "../../../../util/convertDateMilliseconds"
+import useFetch from "../../../../hooks/useFetch"
 import BarChartDataFilter from "./BarChartDataFilter"
+import DoughnutChartFilter from "./DougnutChartFilter"
 
 const OrderChart = () => {
 
@@ -17,26 +18,13 @@ const OrderChart = () => {
     sentOrder,
     receivedOrderLoading,
     sentOrderLoading,
-    handleEntryFilterByLength,
   } = useContext(DashboardContext);
 
   const receivedUrl =
-    "http://api.efactura.md:4445/WebPortalEDXService/json/GetReceivedOrders?";
+    "https://api.edi.md/WebPortalEDXService/json/GetReceivedOrders?";
   const sentUrl =
-    "http://api.efactura.md:4445/WebPortalEDXService/json/GetSentOrders?";
+    "https://api.edi.md/WebPortalEDXService/json/GetSentOrders?";
 
-  const receivedOrderChart = [
-    handleEntryFilterByLength(receivedOrder, "OrderList", "OrderState", 0),
-    handleEntryFilterByLength(receivedOrder, "OrderList", "OrderState", 100),
-    handleEntryFilterByLength(receivedOrder, "OrderList", "OrderState", 300),
-    handleEntryFilterByLength(receivedOrder, "OrderList", "OrderState", 200),
-  ];
-  const sentOrderChart = [
-    handleEntryFilterByLength(sentOrder, "OrderList", "OrderState", 0),
-    handleEntryFilterByLength(sentOrder, "OrderList", "OrderState", 100),
-    handleEntryFilterByLength(sentOrder, "OrderList", "OrderState", 300),
-    handleEntryFilterByLength(sentOrder, "OrderList", "OrderState", 200),
-  ];
 
   const [active, setActive] = useState("invoiceReceivedBtn");
 
@@ -44,8 +32,15 @@ const OrderChart = () => {
     setActive(id);
   }
 
+  /* Doughnut chart filter */
+  const [receivedEntryChart, sentEntryChart] = DoughnutChartFilter(
+    receivedOrder,
+    sentOrder,
+    "OrderList",
+    "OrderState"
+  );
 
-  /* BAR CHART Filter */
+  /* Bar chart filter */
   const [
     processingRec,
     processingSent,
@@ -70,8 +65,8 @@ const OrderChart = () => {
               handleActiveClass={handleActiveClass}
             />
             <DoughnutChart
-              receivedEntryData={receivedOrderChart}
-              sentEntryData={sentOrderChart}
+              receivedEntryData={receivedEntryChart}
+              sentEntryData={sentEntryChart}
               active={active}
             />
           </div>

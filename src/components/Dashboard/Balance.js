@@ -1,7 +1,7 @@
 import React, { useContext } from "react"
 import dollarSign from "../../assets/images/dollar-sign.png"
 import cart from "../../assets/images/cart.png"
-import { LayoutContext } from "../layout/context"
+import { LayoutContext } from "../../layout/context"
 import { localization } from "../../util/localization"
 
 const Balance = () => {

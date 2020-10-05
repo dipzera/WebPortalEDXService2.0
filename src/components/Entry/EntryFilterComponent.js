@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {localization} from "../../util/localization"
 import arrowRight from "../../assets/images/arrow-right.svg"
-import {LayoutContext} from "../layout/context"
+import {LayoutContext} from "../../layout/context"
 
 const EntryFilterComponent = ({getToday, getMonth, getWeek, getCustom, showDateInputs, handleFilterState, activeState, activeDate, setStartDateInput, setEndDateInput, startDateInput, endDateInput}) => {
   const { current_lang } = useContext(LayoutContext)
@@ -52,7 +52,7 @@ const EntryFilterComponent = ({getToday, getMonth, getWeek, getCustom, showDateI
                     : "filter-item__status-list-btn"
                 }
                 onClick={(e) => {
-                  return handleFilterState(e.currentTarget.dataset.status);
+                  handleFilterState(e.currentTarget.dataset.status);
                 }}
               >
                 <a className="filter-item__status-text">
@@ -146,10 +146,7 @@ const EntryFilterComponent = ({getToday, getMonth, getWeek, getCustom, showDateI
                     ? "filter-item__time-link active"
                     : "filter-item__time-link"
                 }
-                onClick={() => {
-                  showDateInputs();
-                  document.querySelector('.filter-item__time').classList.add('active')
-                }}
+                onClick={showDateInputs}
               >
                 <a>{localization[current_lang].invoice.filter.date.Custom}</a>
               </li>

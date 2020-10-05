@@ -1,20 +1,13 @@
 import React, { useContext, useState } from "react";
-import { localization } from "../../util/localization";
-import { LayoutContext } from "../../layout/context";
+import { localization } from "../../../util/localization";
+import { LayoutContext } from "../../../layout/context";
 
 // when I press the select entry button, I'm supposed to change the state and update the chart data
 // prolly supposed to save it in a state or context
 // so if the button is active change state & update data
 
-const GraphSelect = ({ entryType }) => {
+const GraphSelect = ({ entryType, active, handleActiveClass }) => {
   const { current_lang } = useContext(LayoutContext);
-  const [active, setActive] = useState("invoiceReceivedBtn");
-
-  const handleActiveClass = (id) => {
-    setActive(id);
-    console.log(id)
-  };
-
   return (
     <div className="graph-item__select">
       <p className="graph-item__select-title">{entryType}</p>

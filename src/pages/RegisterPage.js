@@ -1,14 +1,19 @@
 import React, { useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-import logoSm2 from "../assets/images/logo_sm_2.png";
+import logoSm2 from "../assets/images/is-logo-pic.png";
+
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import TextError from "../util/TextError";
+import TextError from "../alert/TextError";
+// @ts-ignore
 import Select from "react-select";
 import { SelectLanguage } from "../util/SelectLanguage";
 import { SelectCountry } from "../util/SelectCountry";
-
+import TextAlert from "../alert/TextAlert";
+import useScript from "../hooks/useScript";
+import Modal from "react-modal";
 export const RegisterPage = () => {
+  Modal.setAppElement(document.getElementById("#root"));
   /* Form validation library */
   const validationSchema = Yup.object({
     // CommercialName: Yup.string().required('Required'),
@@ -50,14 +55,10 @@ export const RegisterPage = () => {
   };
 
   const [isLoading, setIsLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [error, setError] = useState(false);
 
-  const changeSubmitButtonState = (e) => {
-    e.innerText = 'Accessați email-ul'
-    e.disabled = true
-  }
-
-  const submitRef = useRef();
-  const onSubmit = (values) => {
+  const onSubmit = (values, { resetForm }) => {
     setIsLoading(true);
     const requestOptions = {
       method: "POST",
@@ -82,13 +83,17 @@ export const RegisterPage = () => {
         password: values.passwordConfirm,
       }),
     };
-    fetch(
-      "http://api.efactura.md:4445/WebPortalEDXService/json/NewRegistration",
-      requestOptions
-    )
+    fetch("https://api.edi.md/EDXService/json/NewRegistration", requestOptions)
       .then((response) => response.json())
       .then((data) => {
         if (data.ErrorCode === 0) {
+          setError(false);
+          setRegistered(true);
+          /* Email is sent, then go to email click the confirmation link which throws you back to the website.com/validate/{token},
+           * pass the token to the ValidateRegistration service function, if the ErrorCode is 0, let the user know the validation has passed successfully,
+           * either it's not 0, then redirect to 404 page */
+        } else {
+          setError(true);
         }
       })
       .catch((error) => console.log(error))
@@ -103,7 +108,7 @@ export const RegisterPage = () => {
 
   const handleCountryOptions = () => {
     let items = [];
-    fetch("http://api.efactura.md:4445/WebPortalEDXService/json/GetCountry")
+    fetch("https://api.edi.md/EDXService/json/GetCountry")
       .then((response) => response.json())
       .then((data) => {
         data.ListCountry.map((item) => {
@@ -130,7 +135,7 @@ export const RegisterPage = () => {
                       <div className="card-title text-center">
                         <img src={logoSm2} alt="" className="" />
                         <h5 className="mt-3">
-                          <b>Creează cont e-factura</b>
+                          <b>Creează cont E-factura</b>
                         </h5>
                       </div>
                       <Formik
@@ -362,26 +367,61 @@ export const RegisterPage = () => {
                           </div>*/}
 
                           <div className="form-group">
-                            <div className="col-sm-12 mt-4">
-                              {isLoading ? (
-                                <button
-                                  className="btn btn-disabled btn-block"
-                                  type="submit"
-                                >
-                                  Se încarcă...
-                                </button>
-                              ) : (
-                                <button
-                                  className="btn btn-primary btn-block"
-                                  type="submit"
-                                  onClick={(e) => changeSubmitButtonState(e.currentTarget)}
-                                >
-                                  Înregistrează-te
-                                </button>
-                              )}
-                            </div>
+                            {registered ? (
+                              <TextAlert>
+                                V-ați înregistrat cu succes, pentru a confirma
+                                datele introduse, accesați email-ul
+                                dumneavoastră!
+                              </TextAlert>
+                            ) : (
+                              <div className="col-sm-12 mt-4">
+                                {isLoading ? (
+                                  <button
+                                    className="btn btn-disabled btn-block"
+                                    type="submit"
+                                  >
+                                    Se încarcă...
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="btn btn-primary btn-block"
+                                    type="submit"
+                                  >
+                                    Înregistrează-te
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
-
+                          <Modal
+                            isOpen={error}
+                            shouldCloseOnEsc={true}
+                            shouldCloseOnOverlayClick={true}
+                            style={{
+                              overlay: {
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                overflow: "no-scroll",
+                              },
+                              content: {
+                                width: 300,
+                                height: 75,
+                                position: "static",
+                              },
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              Utilizator cu aceste date deja există!
+                              <button onClick={() => setError(false)}>X</button>
+                            </div>
+                          </Modal>
                           <div className="form-group">
                             <div className="col-sm-12 mt-4 text-center">
                               <NavLink to={"/login"}>Deja ai un cont?</NavLink>

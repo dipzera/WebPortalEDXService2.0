@@ -1,58 +1,24 @@
 import React, { useContext, useEffect, useState } from "react";
-import { LayoutContext } from "../../../layout/context";
-import { DashboardContext } from "../DashboardContext";
-import GraphSelect from "../Graph/GraphSelect";
-import { localization } from "../../../util/localization";
+import { LayoutContext } from "../../../../layout/context";
+import { DashboardContext } from "../../DashboardContext";
+import GraphSelect from "../GraphSelect";
+import { localization } from "../../../../util/localization";
 import DoughnutChart from "./DoughnutChart";
 import BarChart from "./BarChart";
-import useFetch from "../../../hooks/useFetch";
-import convertDateMilliseconds from "../../../util/convertDateMilliseconds";
+import useFetch from "../../../../hooks/useFetch";
+import convertDateMilliseconds from "../../../../util/convertDateMilliseconds";
 import BarChartDataFilter from "./BarChartDataFilter";
+import DoughnutChartFilter from "./DougnutChartFilter";
 
 const InvoiceChart = () => {
   const { current_lang } = useContext(LayoutContext);
 
   const receivedUrl =
-    "http://api.efactura.md:4445/WebPortalEDXService/json/GetReceivedInvoiceList?";
+    "https://api.edi.md/WebPortalEDXService/json/GetReceivedInvoiceList?";
   const sentUrl =
-    "http://api.efactura.md:4445/WebPortalEDXService/json/GetSentInvoiceList?";
+    "https://api.edi.md/WebPortalEDXService/json/GetSentInvoiceList?";
 
-  const {
-    receivedInvoice,
-    sentInvoice,
-    receivedInvoiceLoading,
-    sentInvoiceLoading,
-    handleEntryFilterByLength,
-  } = useContext(DashboardContext);
-
-  const receivedInvoiceChart = [
-    handleEntryFilterByLength(receivedInvoice, "InvoiceList", "InvoicState", 0),
-    handleEntryFilterByLength(
-      receivedInvoice,
-      "InvoiceList",
-      "InvoicState",
-      100
-    ),
-    handleEntryFilterByLength(
-      receivedInvoice,
-      "InvoiceList",
-      "InvoicState",
-      300
-    ),
-    handleEntryFilterByLength(
-      receivedInvoice,
-      "InvoiceList",
-      "InvoicState",
-      200
-    ),
-  ];
-
-  const sentInvoiceChart = [
-    handleEntryFilterByLength(sentInvoice, "InvoiceList", "InvoicState", 0),
-    handleEntryFilterByLength(sentInvoice, "InvoiceList", "InvoicState", 100),
-    handleEntryFilterByLength(sentInvoice, "InvoiceList", "InvoicState", 300),
-    handleEntryFilterByLength(sentInvoice, "InvoiceList", "InvoicState", 200),
-  ];
+  const { receivedInvoice, sentInvoice } = useContext(DashboardContext);
 
   const [active, setActive] = useState("invoiceReceivedBtn");
 
@@ -60,16 +26,24 @@ const InvoiceChart = () => {
     setActive(id);
   };
 
+  /* Doughnut chart Filter */
+  const [receivedEntryChart, sentEntryChart] = DoughnutChartFilter(
+    receivedInvoice,
+    sentInvoice,
+    "InvoiceList",
+    "InvoicState"
+  );
+
   /* BAR CHART Filter */
   const [
-    processingRec,
-    processingSent,
     pendingRec,
-    pendingSent,
-    acceptedRec,
-    acceptedSent,
+    processingRec,
     rejectedRec,
+    acceptedRec,
+    pendingSent,
+    processingSent,
     rejectedSent,
+    acceptedSent,
   ] = BarChartDataFilter("InvoiceList", "InvoicState", receivedUrl, sentUrl);
 
   return (
@@ -83,8 +57,8 @@ const InvoiceChart = () => {
               handleActiveClass={handleActiveClass}
             />
             <DoughnutChart
-              receivedEntryData={receivedInvoiceChart}
-              sentEntryData={sentInvoiceChart}
+              receivedEntryData={receivedEntryChart}
+              sentEntryData={sentEntryChart}
               active={active}
             />
           </div>

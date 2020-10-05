@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import { localization } from "../../util/localization";
 import arrowRight from "../../assets/images/arrow-right.svg";
-import { LayoutContext } from "../layout/context";
+import { LayoutContext } from "../../layout/context";
 import getCurrentMonth from "../../util/getCurrentMonth";
 import { getCurrentWeek } from "../../util/getCurrentWeek";
 import useFetch from "../../hooks/useFetch";
@@ -20,11 +20,11 @@ import useFilter from "../../hooks/useFilter";
 import EntryTableItemOrder from "./EntryTableItemOrder";
 import EntryFilterComponent from "./EntryFilterComponent";
 
-export const ReceivedInvoice = () => {
+export const ReceivedInvoice = ({history, location}) => {
   const { current_lang } = useContext(LayoutContext);
 
   const fetchUrl =
-    "http://api.efactura.md:4445/WebPortalEDXService/json/GetReceivedInvoiceList?";
+    "https://api.edi.md/WebPortalEDXService/json/GetReceivedInvoiceList?";
 
   const [
     getToday,
@@ -45,6 +45,7 @@ export const ReceivedInvoice = () => {
   ] = useFilter(fetchUrl, "InvoiceList", "InvoicState");
 
   const entryInvoice = true;
+
 
   return (
     <>
@@ -71,11 +72,13 @@ export const ReceivedInvoice = () => {
             <EntryTableItemInvoice
               entryData={invoice}
               current_lang={current_lang}
+              history={history}
             />
           ) : (
             <EntryTableItemOrder
               entryData={invoice}
               current_lang={current_lang}
+              history={history}
             />
           )}
         </>

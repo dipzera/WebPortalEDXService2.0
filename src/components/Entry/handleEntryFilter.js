@@ -1,15 +1,17 @@
 import convertDateMilliseconds from "../../util/convertDateMilliseconds";
 import { getCurrentWeek } from "../../util/getCurrentWeek";
 import getCurrentMonth from "../../util/getCurrentMonth";
+import getCurrentMonthMilliseconds from "../../util/getCurrentMonthMilliseconds"
 
 const currentWeek = getCurrentWeek();
-const currentMonth = getCurrentMonth()
+const currentMonth = getCurrentMonthMilliseconds()
 
 let current = new Date();
 let tomorrow = new Date(current);
 
 let tomorrowMS = current.getTime();
 let currentMS = tomorrow.getTime();
+
 
 const filterEntryByDay = (item, state) => {
   if (state == 50) {

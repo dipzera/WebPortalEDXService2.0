@@ -1,9 +1,9 @@
 import React, {Component, useContext, useEffect, useRef, useState} from "react";
 import { Doughnut } from "react-chartjs-2";
-import { DashboardContext } from "../DashboardContext";
-import {localization} from "../../../util/localization"
-import {LayoutContext} from "../../../layout/context"
-import GraphSelect from "../Graph/GraphSelect"
+import { DashboardContext } from "../../DashboardContext";
+import {localization} from "../../../../util/localization"
+import {LayoutContext} from "../../../../layout/context"
+import GraphSelect from "../GraphSelect"
 
 const DoughnutChart = ({ receivedEntryData, sentEntryData, active }) => {
 

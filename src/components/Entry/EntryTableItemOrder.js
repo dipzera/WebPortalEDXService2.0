@@ -2,7 +2,15 @@ import React from "react";
 import convertDate from "../../util/convertDate";
 import { localization } from "../../util/localization";
 
-const EntryTableItemOrder = ({ entryData, current_lang }) => {
+const EntryTableItemOrder = ({ entryData, current_lang, history }) => {
+  const handleNavigation = (data) => {
+    const location = window.location.pathname;
+    history.push({
+      pathname: `${location}/product`,
+      data: data,
+      currentEntry: location
+    })
+  }
   return (
     <div className="table__container invoice">
       <table>
@@ -18,7 +26,7 @@ const EntryTableItemOrder = ({ entryData, current_lang }) => {
 
         <tbody>
           {entryData.map((item) => (
-            <tr className="table__row" key={item.Number}>
+            <tr className="table__row" key={item.Number} onClick={() => handleNavigation(item)}>
               <td>
                 <span
                   className={"status"}

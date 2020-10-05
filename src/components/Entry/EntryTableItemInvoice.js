@@ -3,8 +3,18 @@ import convertDateWithHour from "../../util/convertDateWithHour";
 import clock from "../../assets/images/clock.svg";
 import convertDate from "../../util/convertDate";
 import { localization } from "../../util/localization";
+import {useHistory } from 'react-router-dom'
 
-const EntryTableItemInvoice = ({ entryData, current_lang }) => {
+const EntryTableItemInvoice = ({ entryData, current_lang, history }) => {
+
+  const handleNavigation = (data) => {
+    const location = window.location.pathname;
+    history.push({
+      pathname: `${location}/product`,
+      data: data,
+      currentEntry: location
+    })
+  }
   return (
     <div className="table__container invoice">
       <table>
@@ -18,10 +28,9 @@ const EntryTableItemInvoice = ({ entryData, current_lang }) => {
             <th>{localization[current_lang].invoice.table.State}</th>
           </tr>
         </thead>
-
         <tbody>
           {entryData.map((item) => (
-            <tr className="table__row" key={item.Number}>
+            <tr className="table__row" key={item.Number} onClick={() => handleNavigation(item)}>
               <td>
                 <span
                   className={"status"}

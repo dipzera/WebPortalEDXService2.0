@@ -1,12 +1,11 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from "react";
 
 const PublicLayout = ({ children }) => {
+  useEffect(() => {
+    localStorage.clear()
+  }, [])
   /* Login Register Recovery Layout */
-  return (
-    <>
-      {children}
-    </>
-  )
-}
+  return <>{children}</>;
+};
 
 export default PublicLayout;

@@ -1,7 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import getCurrentMonth from "../util/getCurrentMonth"
-import useFetch from "./useFetch"
-import {filterEntryByDay, filterEntryByMonth, filterEntryByWeek} from "../components/Entry/handleEntryFilter"
+import React, { useEffect, useState } from "react";
+import getCurrentMonth from "../util/getCurrentMonth";
+import useFetch from "./useFetch";
+import {
+  filterEntryByDay,
+  filterEntryByMonth,
+  filterEntryByWeek,
+} from "../components/Entry/handleEntryFilter";
+import convertDateMilliseconds from "../util/convertDateMilliseconds";
+import { getCurrentWeek } from "../util/getCurrentWeek";
+import {setIn} from "formik"
 
 const useFilter = (fetchUrl, listType, stateType) => {
 
@@ -28,34 +35,22 @@ const useFilter = (fetchUrl, listType, stateType) => {
     JSON.parse(localStorage.getItem("DateButtonState")) || 2
   );
 
-
-
   const { response, error, isLoading } = useFetch({
     method: "get",
     url: fetchUrl + params.toString(),
   });
 
 
-
-  useEffect(() => {
-    if (response !== null) {
-      if (activeDate === 0) {
-        getToday();
-      } else if (activeDate === 1) {
-        getWeek();
-      } else if (activeDate === 2) {
-        getMonth();
-      } else if (activeDate === 3) {
-        showDateInputs();
-        getCustom();
-      }
-    }
-  }, [response, activeDate, activeState]);
-
   useEffect(() => {
     if (response !== null && activeDate == 3) {
       getCustom();
       showDateInputs();
+    } else if (response !== null && activeDate == 0) {
+      getToday();
+    } else if (response !== null && activeDate == 1) {
+      getWeek()
+    } else if (response !== null && activeDate == 2) {
+      getMonth()
     }
   }, [response, activeState, activeDate]);
 
@@ -79,6 +74,22 @@ const useFilter = (fetchUrl, listType, stateType) => {
         filterEntryByWeek(item, activeState)
       )
     );
+
+    // setInvoice(
+    //   activeState == 50
+    //     ? response[listType].filter(
+    //         (item) =>
+    //           convertDateMilliseconds(item.Date) >= currentWeek[0] &&
+    //           convertDateMilliseconds(item.Date) <= currentWeek[1]
+    //       )
+    //     : response[listType].filter(
+    //         (item) =>
+    //           convertDateMilliseconds(item.Date) >= currentWeek[0] &&
+    //           convertDateMilliseconds(item.Date) <= currentWeek[1] &&
+    //           (item.InvoicState == activeState ||
+    //             item.OrderState == activeState)
+    //       )
+    // );
   };
 
   const getMonth = () => {
@@ -87,9 +98,7 @@ const useFilter = (fetchUrl, listType, stateType) => {
       localStorage.setItem("DateButtonState", JSON.stringify("2"))
     );
     setInvoice(
-      response[listType].filter((item) =>
-        filterEntryByMonth(item, activeState)
-      )
+      response[listType].filter((item) => filterEntryByMonth(item, activeState))
     );
   };
 
@@ -121,12 +130,41 @@ const useFilter = (fetchUrl, listType, stateType) => {
       3,
       localStorage.setItem("DateButtonState", JSON.stringify("3"))
     );
+    document.querySelector('.filter-item__time').classList.add('active')
   };
 
   const handleFilterState = (id) => {
     setActiveState(id, localStorage.setItem("ButtonState", JSON.stringify(id)));
+    // setInvoice(response[listType].filter(item => {
+    //   if (activeDate === 0) {
+    //     filterEntryByDay(item, id)
+    //   } else if (activeDate === 1) {
+    //     filterEntryByWeek(item, id)
+    //   } else if (activeDate === 2) {
+    //     filterEntryByMonth(item, id)
+    //   } else if (activeDate === 3) {
+    //     showDateInputs();
+    //     getCustom();
+    //   }
+    // }))
   };
-  return [ getToday, getMonth, getWeek, getCustom, showDateInputs, invoice, handleFilterState, activeState, activeDate, setStartDateInput, startDateInput, setEndDateInput, endDateInput, isLoading, error]
+  return [
+    getToday,
+    getMonth,
+    getWeek,
+    getCustom,
+    showDateInputs,
+    invoice,
+    handleFilterState,
+    activeState,
+    activeDate,
+    setStartDateInput,
+    startDateInput,
+    setEndDateInput,
+    endDateInput,
+    isLoading,
+    error,
+  ];
 };
 
 export default useFilter;

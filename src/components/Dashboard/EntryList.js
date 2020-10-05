@@ -1,79 +1,39 @@
-import React, { useContext, useEffect, useState } from "react";
-import arrowRight from "../../assets/images/arrow-right.svg";
-import { localization } from "../../util/localization";
-import { NavLink, useHistory } from "react-router-dom";
-import getReceivedInvoiceList from "../../server/getReceivedInvoiceList";
-import getSentInvoiceList from "../../server/getSentInvoiceList";
-import getReceivedOrders from "../../server/getReceivedOrders";
-import getSentOrders from "../../server/getSentOrders";
-import getCurrentMonth from "../../util/getCurrentMonth";
-import axios from "axios";
-import useFetch from "../../hooks/useFetch";
-import { LayoutContext } from "../layout/context";
-import LoadingSpinner from "../Loading/LoadingSpinner";
+import React, { useContext, useEffect, useState } from "react"
+import arrowRight from "../../assets/images/arrow-right.svg"
+import { localization } from "../../util/localization"
+import { NavLink, useHistory } from "react-router-dom"
+import getCurrentMonth from "../../util/getCurrentMonth"
+import axios from "axios"
+import useFetch from "../../hooks/useFetch"
+import { LayoutContext } from "../../layout/context"
+import LoadingSpinner from "../Loading/LoadingSpinner"
+import LoadingEntryList from "../Loading/LoadingEntryList"
+import { DashboardContext } from "./DashboardContext"
 
-const EntryList = () => {
-  const currentMonth = getCurrentMonth();
+const EntryList = ({ history }) => {
+  const currentMonth = getCurrentMonth()
 
-  const { current_lang } = useContext(LayoutContext);
-
-  const params = new URLSearchParams({
-    TKey: JSON.parse(localStorage.getItem("Token")),
-    DStart: "2000-01-01",
-    DEnd: "2030-01-01",
-    // DStart: currentMonth[0],
-    // DEnd: currentMonth[1],
-  });
-
-  /* Custom Hook Way */
-  const {
-    response: receivedInvoice,
-    isLoading: receivedInvoiceLoading,
-    error: receivedInvoiceError,
-  } = useFetch({
-    method: "get",
-    url:
-      "http://api.efactura.md:4445/WebPortalEDXService/json/GetReceivedInvoiceList?" +
-      params.toString(),
-  });
+  const { current_lang } = useContext(LayoutContext)
 
   const {
-    response: sentInvoice,
-    isLoading: sentInvoiceLoading,
-    error: sentInvoiceError,
-  } = useFetch({
-    method: "get",
-    url:
-      "http://api.efactura.md:4445/WebPortalEDXService/json/GetSentInvoiceList?" +
-      params.toString(),
-  });
-
-  const {
-    response: receivedOrder,
-    isLoading: receivedOrderLoading,
-    error: receivedOrderError,
-  } = useFetch({
-    method: "get",
-    url:
-      "http://api.efactura.md:4445/WebPortalEDXService/json/GetReceivedOrders?" +
-      params.toString(),
-  });
-
-  const {
-    response: sentOrder,
-    isLoading: sentOrderLoading,
-    error: sentOrderError,
-  } = useFetch({
-    method: "get",
-    url:
-      "http://api.efactura.md:4445/WebPortalEDXService/json/GetSentOrders?" +
-      params.toString(),
-  });
+    receivedInvoice,
+    receivedOrder,
+    sentInvoice,
+    sentOrder,
+    receivedInvoiceLoading,
+    receivedOrderLoading,
+    sentInvoiceLoading,
+    sentOrderLoading,
+    handleEntryFilterByLength,
+  } = useContext(DashboardContext)
 
   return (
     <>
-      {receivedInvoiceLoading && sentInvoiceLoading && receivedOrderLoading && sentOrderLoading  ? (
-        <LoadingSpinner />
+      {receivedInvoiceLoading &&
+      sentInvoiceLoading &&
+      receivedOrderLoading &&
+      sentOrderLoading ? (
+        <LoadingEntryList />
       ) : (
         <div className="dashboard__invoice" id="bigScreen">
           <div className="invoice-col">
@@ -89,9 +49,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedInvoice !== null
-                  ? receivedInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 0
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      0
+                    )
                   : receivedInvoice === "0"}
               </span>
             </div>
@@ -104,9 +67,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedInvoice !== null
-                  ? receivedInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 100
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      100
+                    )
                   : receivedInvoice === "0"}
               </span>
             </div>
@@ -118,12 +84,13 @@ const EntryList = () => {
                 id="unloadedReceivedInvoice"
                 className="invoice-col__status-number"
               >
-                {" "}
-                {/* rejected */}
                 {receivedInvoice !== null
-                  ? receivedInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 300
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      300
+                    )
                   : receivedInvoice === "0"}
               </span>
             </div>
@@ -136,9 +103,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedInvoice !== null
-                  ? receivedInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 200
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      200
+                    )
                   : receivedInvoice === "0"}
               </span>
             </div>
@@ -151,7 +121,13 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedInvoice !== null
-                  ? receivedInvoice.InvoiceList.length
+                  ? handleEntryFilterByLength(
+                      receivedInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      0,
+                      true
+                    )
                   : receivedInvoice === "0"}
               </span>
             </div>
@@ -176,9 +152,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentInvoice !== null
-                  ? sentInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 0
-                    ).length
+                  ? handleEntryFilterByLength(
+                      sentInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      0
+                    )
                   : sentInvoice === "0"}
               </span>
             </div>
@@ -191,9 +170,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentInvoice !== null
-                  ? sentInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 100
-                    ).length
+                  ? handleEntryFilterByLength(
+                      sentInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      100
+                    )
                   : sentInvoice === "0"}
               </span>
             </div>
@@ -206,9 +188,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentInvoice !== null
-                  ? sentInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 300
-                    ).length
+                  ? handleEntryFilterByLength(
+                      sentInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      300
+                    )
                   : sentInvoice === "0"}
               </span>
             </div>
@@ -221,9 +206,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentInvoice !== null
-                  ? sentInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 200
-                    ).length
+                  ? handleEntryFilterByLength(
+                      sentInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      200
+                    )
                   : sentInvoice === "0"}
               </span>
             </div>
@@ -236,9 +224,13 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentInvoice !== null
-                  ? sentInvoice.InvoiceList.filter(
-                      (list) => list.InvoicState === 200
-                    ).length
+                  ? handleEntryFilterByLength(
+                      sentInvoice,
+                      "InvoiceList",
+                      "InvoicState",
+                      0,
+                      true
+                    )
                   : sentInvoice === "0"}
               </span>
             </div>
@@ -263,9 +255,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedOrder !== null
-                  ? receivedOrder.OrderList.filter(
-                      (list) => list.OrderState === 0
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedOrder,
+                      "OrderList",
+                      "OrderState",
+                      0
+                    )
                   : receivedOrder === "0"}
               </span>
             </div>
@@ -278,9 +273,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedOrder !== null
-                  ? receivedOrder.OrderList.filter(
-                      (list) => list.OrderState === 100
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedOrder,
+                      "OrderList",
+                      "OrderState",
+                      100
+                    )
                   : receivedOrder === "0"}
               </span>
             </div>
@@ -293,9 +291,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedOrder !== null
-                  ? receivedOrder.OrderList.filter(
-                      (list) => list.OrderState === 300
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedOrder,
+                      "OrderList",
+                      "OrderState",
+                      300
+                    )
                   : receivedOrder === "0"}
               </span>
             </div>
@@ -308,9 +309,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedOrder !== null
-                  ? receivedOrder.OrderList.filter(
-                      (list) => list.OrderState === 200
-                    ).length
+                  ? handleEntryFilterByLength(
+                      receivedOrder,
+                      "OrderList",
+                      "OrderState",
+                      200
+                    )
                   : receivedOrder === "0"}
               </span>
             </div>
@@ -323,7 +327,13 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {receivedOrder !== null
-                  ? receivedOrder.OrderList.length
+                  ? handleEntryFilterByLength(
+                      receivedOrder,
+                      "OrderList",
+                      "OrderState",
+                      0,
+                      true
+                    )
                   : receivedOrder === "0"}
               </span>
             </div>
@@ -348,8 +358,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentOrder !== null
-                  ? sentOrder.OrderList.filter((list) => list.OrderState === 0)
-                      .length
+                  ? handleEntryFilterByLength(
+                      sentOrder,
+                      "OrderList",
+                      "OrderState",
+                      0
+                    )
                   : sentOrder === "0"}
               </span>
             </div>
@@ -362,9 +376,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentOrder !== null
-                  ? sentOrder.OrderList.filter(
-                      (list) => list.OrderState === 100
-                    ).length
+                  ? handleEntryFilterByLength(
+                      sentOrder,
+                      "OrderList",
+                      "OrderState",
+                      100
+                    )
                   : sentOrder === "0"}
               </span>
             </div>
@@ -377,9 +394,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentOrder !== null
-                  ? sentOrder.OrderList.filter(
-                      (list) => list.OrderState === 300
-                    ).length
+                  ? handleEntryFilterByLength(
+                      sentOrder,
+                      "OrderList",
+                      "OrderState",
+                      300
+                    )
                   : sentOrder === "0"}
               </span>
             </div>
@@ -392,8 +412,12 @@ const EntryList = () => {
                 className="invoice-col__status-number"
               >
                 {sentOrder !== null
-                  ? sentOrder.OrderList.filter((list) => list.OrderState === 0)
-                      .length
+                  ? handleEntryFilterByLength(
+                      sentOrder,
+                      "OrderList",
+                      "OrderState",
+                      200
+                    )
                   : sentOrder === "0"}
               </span>
             </div>
@@ -403,7 +427,13 @@ const EntryList = () => {
               </span>
               <span id="totalSentOrder" className="invoice-col__status-number">
                 {sentOrder !== null
-                  ? sentOrder.OrderList.length
+                  ? handleEntryFilterByLength(
+                      sentOrder,
+                      "OrderList",
+                      "OrderState",
+                      0,
+                      true
+                    )
                   : sentOrder === "0"}
               </span>
             </div>
@@ -417,7 +447,7 @@ const EntryList = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default EntryList;
+export default EntryList

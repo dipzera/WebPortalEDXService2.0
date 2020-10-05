@@ -1,6 +1,6 @@
-import useFetch from "../../../hooks/useFetch"
+import useFetch from "../../../../hooks/useFetch"
 import {useEffect, useState} from "react"
-import convertDateMilliseconds from "../../../util/convertDateMilliseconds"
+import convertDateMilliseconds from "../../../../util/convertDateMilliseconds"
 
 export default function BarChartDataFilter(entryType, entryState, receivedUrl, sentUrl) {
   const handleFilter = (entry, entryState, stateId) => {
@@ -16,20 +16,21 @@ export default function BarChartDataFilter(entryType, entryState, receivedUrl, s
     week.push(day);
   }
 
-  const milliseconds1 = new Date(week[0]).getTime() - 10800000;
-  const milliseconds2 = new Date(week[1]).getTime()- 10800000;
-  const milliseconds3 = new Date(week[2]).getTime()- 10800000;
-  const milliseconds4 = new Date(week[3]).getTime()- 10800000;
-  const milliseconds5 = new Date(week[4]).getTime()- 10800000;
-  const milliseconds6 = new Date(week[5]).getTime()- 10800000;
-  const milliseconds7 = new Date(week[6]).getTime()- 10800000;
+  const milliseconds1 = new Date(week[0]).getTime()
+  const milliseconds2 = new Date(week[1]).getTime()
+  const milliseconds3 = new Date(week[2]).getTime()
+  const milliseconds4 = new Date(week[3]).getTime()
+  const milliseconds5 = new Date(week[4]).getTime()
+  const milliseconds6 = new Date(week[5]).getTime()
+  const milliseconds7 = new Date(week[6]).getTime()
 
 
-  const params = {
+
+  const params = new URLSearchParams({
     TKey: JSON.parse(localStorage.getItem("Token")),
     DStart: week[0],
     DEnd: week[6],
-  };
+  });
 
   const { response: receivedOrderData } = useFetch({
     method: "get",
@@ -37,6 +38,7 @@ export default function BarChartDataFilter(entryType, entryState, receivedUrl, s
       receivedUrl +
       params.toString(),
   });
+
 
   const { response: sentOrderData } = useFetch({
     method: "get",
@@ -59,7 +61,7 @@ export default function BarChartDataFilter(entryType, entryState, receivedUrl, s
   const [f6, setF6] = useState([]);
 
   useEffect(() => {
-    if (receivedOrderData !== null && sentOrderData && null) {
+    if (receivedOrderData !== null && sentOrderData !== null) {
       setD1(
         receivedOrderData[entryType].filter(
           (date) =>
@@ -216,5 +218,5 @@ export default function BarChartDataFilter(entryType, entryState, receivedUrl, s
     handleFilter(f5, entryState, 300),
     handleFilter(f6, entryState, 300),
   ]
-  return [processingRec, processingSent, pendingRec, pendingSent, acceptedRec, acceptedSent, rejectedRec, rejectedSent]
+  return [pendingRec, processingRec, rejectedRec, acceptedRec, pendingSent, processingSent, rejectedSent, acceptedSent]
 }

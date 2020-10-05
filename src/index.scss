@@ -5,7 +5,7 @@
 @import "assets/css/media";
 
 /* ERROR */
-@import "assets/css/error";
+@import "alert/error";
 
 /* THEME */
 @import "assets/css/bootstrap.min.css";
@@ -30,12 +30,26 @@
 @import "assets/css/form";
 
 /* ENTRY  */
-@import "assets/css/filter.scss";
+@import "components/Entry/filter";
 @import "assets/css/table_entry";
 
 /* SCROLL UP BUTTON */
 @import "assets/css/scrollToTop";
 
+
+/* LOADING */
+@import 'components/Loading/loading_entry_list';
+
+/* GRAPH */
+@import 'components/Dashboard/Graph/graph';
+
+/* ALERT */
+@import 'alert/alert';
+
+/* PRODUCT */
+@import 'components/Product/credentials';
+@import 'components/Product/product';
+@import 'components/Product/product_table';
 
 * {
   box-sizing: border-box;
@@ -69,4 +83,15 @@ code {
 ul {
   padding: 0;
   margin: 0;
+}
+
+dd {
+  margin-left: 40px;
+  margin-bottom: 0;
+}
+
+
+/* React Modal */
+.ReactModal__Body--open {
+  overflow: hidden;
 }

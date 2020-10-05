@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import logoSm from '../../assets/images/rsz_is_logo-efactura.png'
+import logoSm from '../../assets/images/logo__2_-removebg-preview.png'
+import axios from 'axios'
 
 const Header = () => {
 
@@ -17,6 +18,32 @@ const Header = () => {
     setExpanded(!expanded)
   }
 
+  const handleLanguageChange = (e) => {
+    const dataLang = e.target.getAttribute('data-lang')
+    const reqOption = {
+      Language: dataLang,
+      IDNO: JSON.parse(localStorage.getItem('IDNO')),
+      CommercialName: JSON.parse(localStorage.getItem('CommercialName')),
+      JuridicalName: JSON.parse(localStorage.getItem('JuridicalName')),
+      Email: JSON.parse(localStorage.getItem('Email')),
+      JuridicalAddress: JSON.parse(localStorage.getItem('JuridicalAddress')),
+      OfficeAddress: JSON.parse(localStorage.getItem('OfficeAddress')),
+      Bank: JSON.parse(localStorage.getItem('Bank')),
+      IBAN: JSON.parse(localStorage.getItem('IBAN')),
+      BIC: JSON.parse(localStorage.getItem('BIC')),
+      VATCode: JSON.parse(localStorage.getItem('VATCode')),
+      Logo: JSON.parse(localStorage.getItem('Logo')),
+    }
+    axios.post('https://api.edi.md/WebPortalEDXService/json/UpdateCompany', reqOption)
+      .then(res => {
+        if (res.data.ErrorCode === 0) {
+          localStorage.setItem('Language', JSON.stringify(dataLang))
+          window.location.reload()
+        } else {
+          console.log(res.data)
+        }
+      })
+  }
 
   return (
 
@@ -25,10 +52,10 @@ const Header = () => {
     <div className="logo">
       <a href="javascript:">
         <span className="logo-img" style={{marginRight: '10px'}}>
-            <img src={logoSm} alt="" height="26"/>
+            <img src={logoSm} alt="" height="40"/>
         </span>
-        { /* <i class="fa fa-maxcdn"></i> */ }
-        <span className="brand-name">E- Factura</span>
+        {/*<i class="fa fa-maxcdn"/>*/}
+        <span className="brand-name">E-factura</span>
       </a>
     </div>
 
@@ -41,24 +68,12 @@ const Header = () => {
       <ul className="nav navbar-nav">
         {/* classic drop down */}
         <li className="dropdown" >
-          <a href="javascript:;" data-toggle="dropdown" className="" aria-expanded={expanded} onClick={toggleDropDown}> English <i
+          <a href="javascript:;" data-toggle="dropdown" className="" aria-expanded={expanded} onClick={toggleDropDown}>{JSON.parse(localStorage.getItem('Language')) === 'ru' ? 'Русский' : 'Română'} <i
             className="mdi mdi-chevron-down"/> </a>
           <ul role="menu" className="dropdown-menu language-switch" x-placement="bottom-start"
               style={{position: "absolute", transform: "translate3d(0px, 60px, 0px)", top: '0px', left: '0px', willChange: 'transform'}}>
             <li>
-              <a tabIndex="-1" href="javascript:;"> German </a>
-            </li>
-            <li>
-              <a tabIndex="-1" href="javascript:;"> Italian </a>
-            </li>
-            <li>
-              <a tabIndex="-1" href="javascript:;"> French </a>
-            </li>
-            <li>
-              <a tabIndex="-1" href="javascript:;"> Spanish </a>
-            </li>
-            <li>
-              <a tabIndex="-1" href="javascript:;"> Russian </a>
+              <a tabIndex="-1" href="javascript:;" data-lang={JSON.parse(localStorage.getItem('Language')) === 'ru' ? 'ro' : 'ru'} onClick={handleLanguageChange}>{JSON.parse(localStorage.getItem('Language')) === 'ru' ? "Română" : 'Русский'}</a>
             </li>
           </ul>
         </li>

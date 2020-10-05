@@ -1,0 +1,31 @@
+.dashboard__invoice.loading {
+
+  .invoice-col {
+    padding-left: 50px;
+  }
+
+  .invoice-col__title {
+    background: $gray;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 100%;
+    width: 200px;
+    margin-bottom: 30px;
+  }
+  .invoice-col__status-text {
+    background: $gray;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    max-width: 100%;
+    width: 150px;
+  }
+
+  .invoice-col__status-number {
+    background: $gray;
+    padding: 5px;
+    border-radius: 5px;
+    max-width: 100%;
+    width: 25px;
+  }
+}
